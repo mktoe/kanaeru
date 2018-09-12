@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kanaeru03</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <% if user_signed_in? %>
+              <h1 class="head_logo"><%= link_to image_tag("top/logo.svg" , :width => '180') , visions_path %></h1>
+            <% else %>
+              <h1 class="head_logo"><%= link_to image_tag("top/logo.svg" , :width => '180') , root_path %></h1>
+            <% end %>
+          </div>
+
+          <div class="col-md-8">
+          <nav>
+              <% if user_signed_in? %>
+                <ul class="login_head_list">
+                <li><%= link_to 'プロフィール変更', edit_user_registration_path %></li>
+                <li><%= link_to 'ログアウト', destroy_user_session_path, method: :delete %></li>
+                </ul>
+              <% else %>
+              <ul class="login_head_list">
+                <li><%= link_to 'ログイン', new_user_session_path %></li>
+                <li class="head_sign_btn"><%= link_to '無料で始める', new_user_registration_path %></li>
+              </ul>
+              <% end %>
+          </nav>
+        </div>
+
+        </div><!--/.row-->
+      </div><!--/.container-->
+    </header>
+
+    <% #pagesコントローラーの時に %>
+    <% if controller.controller_name == "pages" %> 
+      <% if controller.action_name == "precomplete" || controller.action_name == "show" %> 
+        <div class="main_content">
+      <% end %>
+    <% else %>
+      <div class="main_content">
+    <% end %>
+
+      <% #ログインのメッセージ表示 %>
+      <% if flash[:notice] %>
+      <div class="flash">
+        <p class="notice"><%= notice %></p>
+      </div>
+      <% end %>
+      <% if flash[:alert] %>
+      <div class="flash">
+        <p class="alert"><%= alert %></p>
+      </div>
+      <% end %>
+      
+     
+
+      <%= yield %>
+
+    <% if controller.controller_name == "pages" %> 
+      <% if controller.action_name == "precomplete" || controller.action_name == "show" %> 
+        </div><!--/.main_content-->
+      <% end %>
+    <% else %>
+      </div><!--/.main_content-->
+    <% end %>
+    
+    <% # TOPのみfooterを表示 %>
+    <% if controller.controller_name == "pages" %> 
+      <% if controller.action_name == "precomplete" || controller.action_name == "show" %> 
+      <% else%>
+        <footer>
+        </footer>
+      <% end %>
+    <% end %>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script>
+
+    new Vue({
+      el: '#app01',
+      data: {
+        show: true
+      }
+    })
+    
+    </script>
+  </body>
+</html>

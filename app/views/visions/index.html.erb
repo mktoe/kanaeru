@@ -1,0 +1,160 @@
+<div class="container-fluid">
+    <div class="row">
+
+
+        <div class="sidebar col-md-3 hidden-xs">
+
+            <%
+                #期限と現在の年月日を取得して差分を抽出
+                require "date"
+
+                year = (@vision.dead_line.strftime("%Y")).to_i
+                month = (@vision.dead_line.strftime("%m")).to_i
+                day = (@vision.dead_line.strftime("%d")).to_i
+
+                d1 = Date.new(year, month ,day)
+                d2 = Date.today
+                sa = (d1 - d2).to_i
+            %>
+
+            <div class="vision_area">
+                目標達成期限まであと<%= sa %>日
+                <h2><%= current_user.name %>さんの最終目標</h2>
+                <p class="vision_main_text"><%= @vision.vision %></p>
+                <p>達成目標日 :<%= @vision.dead_line.strftime("%Y年%m月%d日") %></p>
+
+                <%= link_to("/visions/#{@vision.id}/edit" , class: "btn btn-lg btn-block btn-primary") do %>
+                    最終目標の編集
+                <% end %> 
+            </div><!--/.vision_area-->
+
+            <div class="comp_area">
+                <h2>完了プロセス一覧</h2>
+                <ul class="tasks_list">
+                <% @tasks.each do |task| %>
+                    <% if task.finished == true %>
+                    <li>
+                        <%= task.task %><br>
+                        <%= link_to("戻す","/tasks/#{task.id}/unfinished_change" , data: {confirm: "このプロセスを戻しますか？"} , class: "btn btn-sm btn-primary") %>
+                        <%= link_to("削除","/tasks/#{task.id}/destroy", data: {confirm: "本当に削除しますか？"} , class: "btn btn-sm btn-primary") %>
+                    </li>
+                    <% end %>
+                <% end %>
+                </ul>
+            </div><!--/.comp_area-->
+        </div><!--/.sidebar -->
+
+
+
+        <div class="left_content col-md-9 offset-sm-3">
+            
+            <% task_count = 0 %>
+            <% @tasks.each do |task| %>
+                <% if task.finished == false %>
+                <% 
+                    #プロセスの個数変数countをカウント
+                    task_count = task_count + 1
+                %>
+                <% end %>
+            <% end %>
+
+            <h2><%= current_user.name %>さんのプロセス <%= task_count %>個</h2>
+
+            <div id="app01" class="clearfix">
+                <button @click="show = !show" v-if="show" type="button" class="btn btn-lg btn-primary btn-block add_btn">
+                    <i class="fa fa-plus"></i> プロセスの追加
+                </button>
+
+                <div class="error_message center">
+                    <% @task.errors.full_messages.each do |message| %>
+                        <%= message %>
+                    <% end %>
+                </div>
+
+                <transition name="slide-fade">
+                    <div v-if="!show">
+                        <div class="task_create_area">
+                            <%= form_for @task,url:'/tasks/create' do |f| %>
+                                <%= f.hidden_field :user_id , :value => current_user.id %>
+                                    
+                                <%= f.label :"プロセスの入力" %>
+                                <%= f.text_area :task , class: "hogehoge" , placeholder: "(例)100万円貯金する" %>
+                                <br>
+                                <%= f.label :"目標期日の入力" %><br>
+                                <%= raw sprintf(
+                                        f.date_select(
+                                            :dead_line,
+                                            use_month_numbers: true,
+                                            start_year:        Time.now.year,
+                                            end_year:          (Time.now.year + 100),
+                                            date_separator:    '%s'), # 年月日区切りをそれぞれ指定
+                                        '年 ', '月 ') + '日'
+                                %>
+                                <br>
+                                <%= f.submit :"追加" , :class=>"btn btn-primary add_btn" %>
+                            <% end %>
+                            <button class="cancel_btn" @click="show = !show">✖️</button>
+                        </div><!--task_create_area-->
+                    </div>
+                </transition>
+            </div><!--/#app01-->
+
+            <ul class="tasks_list main_task_list">
+            <% 
+                #プロセスの個数を返す変数
+                count = 0 
+            %>
+            <% @tasks.each do |task| %>
+                <% if task.finished == false %>
+                <% 
+                    #プロセスの個数変数countをカウント
+                    count += 1 
+                %>
+                <li>
+                    <%
+                        #期限と現在の年月日を取得して差分を抽出
+                        require "date"
+                        year = (task.dead_line.strftime("%Y")).to_i
+                        month = (task.dead_line.strftime("%m")).to_i
+                        day = (task.dead_line.strftime("%d")).to_i
+
+                        d1 = Date.new(year, month ,day)
+                        d2 = Date.today
+                        sa = (d1 - d2).to_i
+                    %>
+                    <span>プロセス達成期限まであと<%= sa %>日</span><br>
+                    #<%= count %><%= task.task %><br>
+                    <i class="fa fa-flag" aria-hidden="true"></i> 目標期日
+                    <%= task.dead_line.strftime("%Y年%m月%d日") %>
+                    <%= link_to("編集","/tasks/#{task.id}/edit", class: "btn btn-sm btn-primary") %>
+                    <%= link_to("削除","/tasks/#{task.id}/destroy", data: {confirm: "本当に削除しますか？"} , class: "btn btn-sm btn-primary") %>
+                    <br>
+                    <%= link_to("/tasks/#{task.id}/finished_change" , data: {confirm: "このプロセスは完了しましたか？"} , class: "btn btn-primary") do %>
+                        <i class="fa fa-check-square-o" aria-hidden="true"></i> プロセスの完了
+                    <% end %> 
+
+                </li>
+                <% end %>
+            <% end %>
+            </ul>
+
+            
+
+        </div>
+
+
+    </div><!--/.row-->
+</div><!--/.container -->
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,35 @@
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="big_h2 center">ビジョンの編集</h2>
+        </div>
+
+        <div class="col-md-6 offset-md-3 user_form_area">
+
+        <%= form_for @vision,url:"/visions/#{@vision.id}/update" , method: "post" do |f| %>
+            
+            <div class="field">
+                <%= f.label :"ビジョンの編集" %>
+                <%= f.text_area :vision , class: "hogehoge", :value => @vision.vision %>
+            </div>
+            <br>
+            <%= f.label :"生年月日" %>
+            <%= raw sprintf(
+                    f.date_select(
+                        :dead_line,
+                        use_month_numbers: true,
+                        start_year:        Time.now.year,
+                        end_year:          (Time.now.year + 100),
+                        date_separator:    '%s',
+                        :value => @vision.dead_line
+                        ), # 年月日区切りをそれぞれ指定
+                    '年 ', '月 ') + '日'
+            %>
+            <br>
+            <%= f.submit :"編集完了" , :class=>"submit_btn" %>
+        <% end %>
+
+        </div>
+    </div><!--/.row-->
+</div><!--/.container-->

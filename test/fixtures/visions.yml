@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  vision: MyText
+  dead_line: 2018-08-14 14:24:59
+
+two:
+  user_id: 1
+  vision: MyText
+  dead_line: 2018-08-14 14:24:59

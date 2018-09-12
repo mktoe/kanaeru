@@ -1,0 +1,40 @@
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="big_h2 center"><%= image_tag "top/logo.svg" , :width => '160' %> へようこそ <span class="orange"><%= current_user.name %></span> さん！<br>
+            自分のビジョンを設定し、達成に必要なステップを<br>
+            登録していきましょう！</h2>
+        </div>
+
+        <div class="col-md-12">
+            <div class="error_message center">
+            <% @vision.errors.full_messages.each do |message| %>
+                <%= message %>
+            <% end %>
+            </div>
+        </div>
+
+        <div class="col-md-8 offset-md-2">
+            <%= form_for @vision,url:"/visions/create" do |f| %>
+                <%= f.hidden_field :user_id , :value => current_user.id %>
+                    
+                <%= f.label :"あなたの将来のビジョン(なりたい自分や夢など)を入力してください。" %><br>
+                <%= f.text_area :vision , class: "hogehoge" , placeholder: "(例)10kg痩せて恋人を作る" %>
+                <br>
+                <%= f.label :"入力したビジョンの達成目標期日を入力してください。" %><br>
+                <%= raw sprintf(
+                        f.date_select(
+                            :dead_line,
+                            use_month_numbers: true,
+                            start_year:        Time.now.year,
+                            end_year:          (Time.now.year + 100),
+                            date_separator:    '%s'), # 年月日区切りをそれぞれ指定
+                        '<span class="select_text">年</span> ', '<span class="select_text">月</span> ') + '<span class="select_text">日</span>'
+                %>
+                <br>
+                <%= f.submit :"Kanaeruを始める" , :class=>"submit_btn"  %>
+            <% end %>
+        </div>
+    </div><!--/.row-->
+</div><!--/.container-->
